@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Geolocation } from 'react-native';
 
 const axios = require('axios').default;
 class Blink extends Component {
@@ -18,13 +18,62 @@ class Blink extends Component {
       <Text>{this.state.test}</Text>
     );
   }
-  
 }
 
 export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  state = {
+    location: null,
+    one: null,
+    two: null,
+  }
+  anotherstate = {
+    one: null,
+    two: null,
+  }
+
+  componentDidUpdate() {
+    if (this.state.one !== null && this.state.two !== null) {
+      console.log(Number(this.state.one) + Number(this.state.two));
+    }
+  }
+
+  findCoordinates = () => {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const location = JSON.stringify(position);
+
+        this.setState({ location });
+      },
+      error => alert(error.message),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+  };
+
   render() {
     return (
       <View style={styles.container}>
+        <Button
+          title = 'Test'
+          onPress = {this.findCoordinates}
+        />
+        <Text>Location: {this.state.location}</Text>
+        <TextInput 
+          keyboardType = 'numeric'
+          onChangeText = {(e) => this.setState({'one': e})}
+          value = {this.state.one}
+          style={{ width: 400, borderColor: 'gray', borderWidth: 1 }}
+        />
+        <TextInput 
+          keyboardType = 'numeric'
+          onChangeText = {(e) => this.setState({'two': e})}
+          value = {this.state.two}
+          style={{ width: 400, borderColor: 'gray', borderWidth: 1 }}
+        />
         <Blink />
       </View>
     );
@@ -38,3 +87,4 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 });
+
