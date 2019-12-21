@@ -1,99 +1,74 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Geolocation } from 'react-native';
+import { Notifications } from 'expo';
+import MainPage from './MainPage'
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
 
-const axios = require('axios').default;
-class Blink extends Component {
-  state = { 
-    test: 'testing' 
-  };
-
-  componentDidMount() {
-    axios.get('http://127.0.0.1:3000')
-      .then(resp => this.setState({ test: resp.data })
-    );
-  }
-
-  render() {
-    return (
-      <Text>{this.state.test}</Text>
-    );
-  }
-}
+const LOCATION_TASK_NAME = 'background-location-task';
+let location = null;
 
 export default class App extends Component {
-
-  constructor(props) {
-    super(props);
+  async startLocationUpdatesAsync() {
+    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME);
   }
 
-  state = {
-    one: null,
-    two: null,
-    location: {
-      latitude: 0,
-      longitude: 0,
-    },
-  }
-  anotherstate = {
-    one: null,
-    two: null,
-  }
-
-  componentDidUpdate() {
-    if (this.state.one !== null && this.state.two !== null) {
-      console.log(Number(this.state.one) + Number(this.state.two));
+  static getLocation() {
+    axios.get(Routes.getLocation(location.lat, location.lat))
+      .then(response => {
+        if (location.borough !== response.data.borough) {
+          const notification = {
+            title: 'Welcome to ' + response.data.borough + '!',
+            body: 'Tap me to open the app.',
+            ios: { sound: true },
+          };
+          
+          Notifications.scheduleLocalNotificationAsync(notification, { time: Date.now() + 2500 });
+        }
+  
+        location = {
+          latitude: location.lat,
+          longitude: location.lat,
+          borough: response.data.borough,
+        };
+      });
+    }
+    
+  async getPermissions() {
+    const { status, expires, permissions } = await Permissions.getAsync(
+      Permissions.LOCATION,
+      Permissions.NOTIFICATIONS
+    );
+  
+    if (status !== 'granted') {
+      const { status, permissions } = await Permissions.askAsync(
+        Permissions.LOCATION,
+        Permissions.NOTIFICATIONS,
+      );
     }
   }
 
-  findCoordinates = () => {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const location = JSON.parse(JSON.stringify(position));
-        const locationObj = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        };
-
-        this.setState({
-          location: locationObj 
-        });
-      },
-      error => alert(error.message),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
-  };
-
   render() {
     return (
-      <View style={styles.container}>
-        <Button
-          title = 'Test'
-          onPress = {this.findCoordinates}
-        />
-        <Text>Location: {this.state.location.latitude}, {this.state.location.longitude}</Text>
-        <TextInput 
-          keyboardType = 'numeric'
-          onChangeText = {(e) => this.setState({'one': e})}
-          value = {this.state.one}
-          style={{ width: 400, borderColor: 'gray', borderWidth: 1 }}
-        />
-        <TextInput 
-          keyboardType = 'numeric'
-          onChangeText = {(e) => this.setState({'two': e})}
-          value = {this.state.two}
-          style={{ width: 400, borderColor: 'gray', borderWidth: 1 }}
-        />
-        <Blink />
-      </View>
+      <MainPage></MainPage>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-});
+if (!TaskManager.isTaskDefined(LOCATION_TASK_NAME)) {
+  TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+    if (error) {
+      return;
+    }
+    
+    if (data) {
+      location = {
+        lat: data['locations'].coords.latitude,
+        long: data['locations'].coords.longitude,
+        borough: '',
+      };
 
+      App.getLocation();
+    }
+  }
+)};
