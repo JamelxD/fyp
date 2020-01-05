@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Notifications } from 'expo';
 import MainPage from './MainPage'
 import * as Permissions from 'expo-permissions';
@@ -72,11 +71,16 @@ export default class App extends Component {
 
   componentDidMount() {
     this.startLocationUpdatesAsync();
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        App.getLocation(position.coords.latitude, position.coords.longitude);
+      },
+    );
   }
 
   render() {
     return (
-      <MainPage></MainPage>
+      <MainPage/>
     );
   }
 } 

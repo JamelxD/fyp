@@ -9,4 +9,11 @@ export default class Routes {
             return response;        
           })
     }
+
+    static getBoroughInfo(boroughName) {
+      return axios.get(BASE_URL + '/getBoroughInfo?boroughName=' + boroughName)
+        .then(response => {
+          return response;
+        });
+    }
 }

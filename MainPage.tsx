@@ -1,34 +1,50 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import App from './App';
+import { StyleSheet, Text, View, Button, AsyncStorage } from 'react-native';
+import Routes from './Routes';
 
 export default class MainPage extends Component {
-    constructor(props) {
-        super(props);
+    state = {
+        boroughName: '',
+        data: {
+            disabled_badge_parking_limit: {
+                N: null,
+            },
+            pcn_prices: {
+                N: null,
+            },
+        },
     }
 
-    findCoordinates = () => {
-        var borough = '';
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                const location = JSON.parse(JSON.stringify(position));
-                const lat = location.coords.latitude;
-                const long = location.coords.longitude;
-                
-                // borough = App.getLocation(lat, long);
-            },
-            error => alert(error.message),
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-        );
+    constructor(props) {
+        super(props);
+        this.getBorough();
+    }
 
-        return borough;
-    };
+    async getBorough() {
+        const borough = await AsyncStorage.getItem('location-borough');
+        this.setState({
+            boroughName: borough
+        });
+
+        this.getBoroughInfo();
+    }
+
+    async getBoroughInfo() {
+        Routes.getBoroughInfo(this.state.boroughName)
+        .then(response => {
+            this.setState({
+                data: response.data,
+            });
+        });
+    }
 
     render() {
         return (
-        <View style={styles.container}>
-            <Text>Test</Text>
-        </View>
+            <View style={styles.container}>
+                <Text>{this.state.boroughName}</Text>
+                <Text>Disabled Badge Parking Limit: {this.state.data.disabled_badge_parking_limit.N}</Text>
+                <Text>PCN Prices: {this.state.data.pcn_prices.N}</Text>
+            </View>
         );
     }
 }
