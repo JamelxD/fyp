@@ -14,22 +14,6 @@ export default class MainPage extends Component {
                 N: null,
             },
         },
-        markers: [
-            {
-                key: 0,
-                lat: 51.514226,
-                long: -0.109378,
-                title: 'Test',
-                description: 'Test'
-            },
-            {
-                key: 1,
-                lat: 51.514626,
-                long: -0.109378,
-                title: 'Test',
-                description: 'Test'
-            }
-        ],
     }
 
     constructor(props) {
@@ -56,29 +40,11 @@ export default class MainPage extends Component {
     }
 
     render() {
-        console.log(this.state);
         return (
             <View style={styles.container}>
-                {/* <Text>{this.state.boroughName}</Text>
+                <Text>{this.state.boroughName}</Text>
                 <Text>Disabled Badge Parking Limit: {this.state.data.disabled_badge_parking_limit.N}</Text>
-                <Text>PCN Prices: {this.state.data.pcn_prices.N}</Text> */}
-                <MapView
-                    provider={'google'}
-                    style={styles.mapStyle}
-                    showsUserLocation={true}
-                    followsUserLocation={true}
-                    showsMyLocationButton={true}
-                    minZoomLevel={16}
-                    loadingEnabled={true}
-                >
-                    {this.state.markers.map(marker => (
-                    <Marker
-                        coordinate={{latitude: marker.lat, longitude: marker.long}}
-                        title={marker.title}
-                        description={marker.description}
-                    />
-                    ))}
-                </MapView>
+                <Text>PCN Prices: {this.state.data.pcn_prices.N}</Text>
             </View>
         );
     }
