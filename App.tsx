@@ -52,7 +52,6 @@ export default class App extends Component {
     var newBorough = null;
     await Routes.getLocation(lat, long)
       .then(response => {
-        console.log(response);
         try {
           newBorough = response.data.borough;
         } catch (e) {
@@ -83,16 +82,8 @@ export default class App extends Component {
       };
 
       Notifications.scheduleLocalNotificationAsync(notification, { time: Date.now() + 2500 });
+      
     }
-  }
-
-  componentDidMount() {
-    // this.startLocationUpdatesAsync();
-    // navigator.geolocation.getCurrentPosition(
-    //   position => {
-    //     App.getLocation(position.coords.latitude, position.coords.longitude);
-    //   },
-    // );
   }
 
   render() {

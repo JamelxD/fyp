@@ -1,63 +1,90 @@
 import React, { Component } from 'react';
+import * as Location from 'expo-location';
 import { StyleSheet, Text, View, Button, AsyncStorage, Dimensions } from 'react-native';
 import Routes from './Routes';
-import MapView, { Marker } from 'react-native-maps';
 
 export default class MainPage extends Component {
-    state = {
-        boroughName: '',
-        data: {
-            disabled_badge_parking_limit: {
-                N: null,
-            },
-            pcn_prices: {
-                N: null,
-            },
-        },
-    }
+  state = {
+    boroughName: '',
+    data: {
+      disabled_badge_parking_limit: {
+        N: null,
+      },
+      pcn_prices: {
+        N: null,
+      },
+    },
+  }
 
-    constructor(props) {
-        super(props);
-        this.getBorough();
-    }
+  constructor(props) {
+    super(props);
 
-    async getBorough() {
-        const borough = await AsyncStorage.getItem('location-borough');
+    this.getBorough = this.getBorough.bind(this);
+  }
+
+  componentDidMount() {
+    Location.watchPositionAsync({}, (location) => this.updateLocation(location));
+  }
+
+  async updateLocation(location) {
+    const lat = location.coords.latitude;
+    const long = location.coords.longitude;
+
+    var newBorough = null;
+    await Routes.getLocation(lat, long)
+      .then(response => {
+        try {
+          newBorough = response.data.borough;
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      );
+
+    if (this.state.boroughName !== newBorough) {
+      this.setState({
+        boroughName: newBorough,
+      }, this.getBoroughInfo);
+    }
+  }
+
+  async getBorough() {
+    const borough = await AsyncStorage.getItem('location-borough');
+    this.setState({
+      boroughName: borough,
+    });
+
+    this.getBoroughInfo();
+  }
+
+  async getBoroughInfo() {
+    Routes.getBoroughInfo(this.state.boroughName)
+      .then(response => {
         this.setState({
-            boroughName: borough,
+          data: response.data,
         });
+      });
+  }
 
-        this.getBoroughInfo();
-    }
-
-    async getBoroughInfo() {
-        Routes.getBoroughInfo(this.state.boroughName)
-            .then(response => {
-                this.setState({
-                    data: response.data,
-                });
-            });
-    }
-
-    render() {
-        return (
-            <View style={styles.container}>
-                <Text>{this.state.boroughName}</Text>
-                <Text>Disabled Badge Parking Limit: {this.state.data.disabled_badge_parking_limit.N}</Text>
-                <Text>PCN Prices: {this.state.data.pcn_prices.N}</Text>
-            </View>
-        );
-    }
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>{this.state.boroughName}</Text>
+        <Text>Disabled Badge Parking Limit: {this.state.data.disabled_badge_parking_limit.N}</Text>
+        <Text>PCN Prices: {this.state.data.pcn_prices.N}</Text>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    mapStyle: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  mapStyle: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
 });
