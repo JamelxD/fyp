@@ -28,24 +28,15 @@ if (!TaskManager.isTaskDefined(LOCATION_TASK_NAME)) {
 };
 
 export default class App extends Component {
-  async startLocationUpdatesAsync() {
-    await this.getPermissions();
-    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME);
+  constructor(props) {
+    super(props);
+
+    this.startLocationUpdatesAsync();
   }
 
-  async getPermissions() {
-    const { status, expires, permissions } = await Permissions.getAsync(
-      Permissions.LOCATION,
-      Permissions.NOTIFICATIONS
-    );
-
-    if (status !== 'granted') {
-      const { status, permissions } = await Permissions.askAsync(
-        Permissions.LOCATION,
-        Permissions.NOTIFICATIONS,
-      );
-    }
-  };
+  async startLocationUpdatesAsync() {
+    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME);
+  }
 
   static async getLocation(lat, long) {
     const existingBorough = await AsyncStorage.getItem('location-borough');

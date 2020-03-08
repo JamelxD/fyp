@@ -28,6 +28,12 @@
       "config": {
         "googleMapsApiKey": "AIzaSyBGOmrrFBiUBvOnR_rMM2gbx6ZHYKb5r4w"
       }
+    },
+    "android": {
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
     }
   }
 }

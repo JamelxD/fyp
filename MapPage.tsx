@@ -19,6 +19,7 @@ export default class MapPage extends Component {
 
     this.removeDisabledBadge = this.removeDisabledBadge.bind(this);
     this.showParkingTypeDialog = this.showParkingTypeDialog.bind(this);
+    this.sendParkingSpaceForReview = this.sendParkingSpaceForReview.bind(this);
   }
 
   componentDidMount() {
@@ -79,6 +80,20 @@ export default class MapPage extends Component {
     });
   }
 
+  sendParkingSpaceForReview(e, parkingType) {
+    const marker = this.state.markers.pop();
+    marker.type.S = parkingType;
+    this.setState({
+      markers: this.state.markers.concat(marker),
+      showDialogs: {
+        addToMap: false,
+        getParkingType: false,
+      },
+    }, () => {
+      Routes.sendDisabledParkingSpaceForRequest(marker)
+    });
+  }
+
   renderDialogs() {
     if (this.state.showDialogs.addToMap) {
       return (
@@ -101,8 +116,8 @@ export default class MapPage extends Component {
             Parking Bay or section of road where one can park or Car park free for Disabled badge users.
         </Dialog.Description>
           <Dialog.Button label="Cancel" onPress={this.removeDisabledBadge} />
-          <Dialog.Button label="Parking Bay" onPress={this.removeDisabledBadge} />
-          <Dialog.Button label="Car Park" onPress={this.removeDisabledBadge} />
+          <Dialog.Button label="Parking Bay" onPress={(e) => this.sendParkingSpaceForReview(e, 'Parking Bay')} />
+          <Dialog.Button label="Car Park" onPress={(e) => this.sendParkingSpaceForReview(e, 'Car Park')} />
         </Dialog.Container>
       );
     }
