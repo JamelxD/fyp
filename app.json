@@ -30,10 +30,15 @@
       }
     },
     "android": {
+      "package": "com.pcnborough.app",
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyAAiLAl1b8DbmbVMJLqJDzbAe3oYwn91pE"}
+      },
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION"
       ]
     }
+   
   }
 }

@@ -8,11 +8,23 @@ export default class MainPage extends Component {
   state = {
     boroughName: '',
     data: {
-      disabled_badge_parking_limit: {
-        N: null,
+      double_yellow_parking_limit: {
+        S: null,
       },
-      pcn_prices: {
-        N: null,
+      single_yellow_parking_limit: {
+        S: null,
+      },
+      car_park_access: {
+        S: null,
+      },
+      p_and_d: {
+        S: null,
+      },
+      disabledbays: {
+        S: null,
+      },
+      additional_info: {
+        S: null,
       },
     },
   }
@@ -88,10 +100,24 @@ export default class MainPage extends Component {
 
   render() {
     return (
+      
       <View style={styles.container}>
-        <Text>{this.state.boroughName}</Text>
-        <Text>Disabled Badge Parking Limit: {this.state.data.disabled_badge_parking_limit.N}</Text>
-        <Text>PCN Prices: {this.state.data.pcn_prices.N}</Text>
+        <Text>The information below assumes you have blue badge immunities and located in the {this.state.boroughName} area </Text>
+        <Text></Text>
+        <Text></Text>
+        <Text></Text>
+        <Text></Text>
+        <Text>Double Yellow Line Parking Limit: {this.state.data.double_yellow_parking_limit.S}</Text>
+        <Text></Text>
+        <Text>Single Yellow Line Parking Limit: {this.state.data.single_yellow_parking_limit.S}</Text>
+        <Text></Text>
+        <Text>Car Park Parking: {this.state.data.car_park_access.S}</Text>
+        <Text></Text>
+        <Text>Pay and Display parking: {this.state.data.p_and_d.S}</Text>
+        <Text></Text>
+        <Text>Disabled Bays availability: {this.state.data.disabledbays.S}</Text>
+        <Text></Text>
+        <Text>Additional information: {this.state.data.additional_info.S}</Text>
       </View>
     );
   }

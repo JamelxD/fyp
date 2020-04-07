@@ -9,6 +9,7 @@ import { AsyncStorage } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MapPage from './MapPage';
 import { NavigationContainer } from '@react-navigation/native';
+import MiscPage from './MiscPage';
 
 const LOCATION_TASK_NAME = 'background-location-task';
 const TAB = createMaterialBottomTabNavigator();
@@ -82,8 +83,8 @@ export default class App extends Component {
       <NavigationContainer>
         <TAB.Navigator>
           <TAB.Screen name="Home" component={MainPage} />
-          <TAB.Screen name="Placeholder" component={MapPage} />
           <TAB.Screen name="Map" component={MapPage} />
+          <TAB.Screen name="Miscellenious" component={MiscPage} />
         </TAB.Navigator>
       </NavigationContainer>
     );

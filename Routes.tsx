@@ -6,7 +6,7 @@ if (Platform.OS !== 'ios') {
   BASE_URL = 'http://10.0.2.2:3000';
 }
 
-export default class Routes {
+export default class Routes { 
   static getLocation(lat, long) {
     return axios.get(BASE_URL + '/getLocation?lat=' + lat + '&long=' + long)
       .then(response => {
