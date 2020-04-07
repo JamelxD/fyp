@@ -69,7 +69,8 @@ export default class App extends Component {
       await AsyncStorage.setItem('location-borough', String(newBorough));
       const notification = {
         title: 'Welcome to ' + newBorough + '!',
-        body: `Parking Strictness: ${boroughInfo['parking_strictness']['S'].toUpperCase()}`,
+        body: `Parking Strictness: ${boroughInfo['parking_strictness']['S'].toUpperCase()}` + " " + 
+         `Congestion Zone: ${boroughInfo['congestion_zone']['S'].toUpperCase()}`,
         ios: { sound: true },
       };
 
